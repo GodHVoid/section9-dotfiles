@@ -1,3 +1,17 @@
+# AGS runtime data
 ags/cache/
 ags/logs/
+
+# Logs and generated files
 *.log
+*.cache
+
+# Secrets
+.ssh/
+.gnupg/
+*token*
+*secret*
+*credential*
+
+# Hyprland crash reports
+hypr/hyprlandCrashReport*
