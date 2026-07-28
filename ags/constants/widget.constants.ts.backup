@@ -51,7 +51,7 @@ export const rightPanelWidgetSelectors: WidgetSelector[] = [
     icon: "",
     widget: ({ className }: { className?: string | Accessor<string> }) =>
       Waifu({ className }),
-    enabled: false,
+    enabled: true,
   },
   {
     name: "Media",
@@ -134,19 +134,19 @@ export const leftPanelWidgetSelectors: WidgetSelector[] = [
     name: "Settings",
     icon: "",
     widget: () => SettingsWidget(),
-    enabled: true,
+    enabled: false,
   },
   {
     name: "CustomScripts",
     icon: "",
     widget: () => CustomScripts(),
-    enabled: true,
+    enabled: false,
   },
   {
     name: "KeyBinds",
     icon: "",
     widget: () => KeyBinds(),
-    enabled: true,
+    enabled: false,
   },
   {
     name: "Donations",
