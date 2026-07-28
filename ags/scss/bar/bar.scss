@@ -1,0 +1,40 @@
+.bar {
+  @include module;
+
+  padding: 5px;
+  background: rgba(7, 16, 21, 0.94);
+  color: $section9-text;
+
+  border-bottom: 1px solid $section9-cyan-dim;
+  border-radius: 0;
+
+  &.compact {
+    button,
+    .custom-revealer {
+      background-color: transparent;
+    }
+  }
+
+  button {
+    color: $section9-text;
+    background: transparent;
+    border-radius: 2px;
+
+    &:hover {
+      color: $section9-cyan;
+      background: rgba(38, 127, 136, 0.18);
+    }
+
+    &:active,
+    &.active,
+    &.is-focused,
+    &:checked {
+      color: $section9-bg;
+      background: $section9-cyan;
+    }
+  }
+}
+
+window.bar {
+  background: rgba(7, 16, 21, 0.94);
+}

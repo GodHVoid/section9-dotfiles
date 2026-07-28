@@ -1,0 +1,16 @@
+.information {
+  popover {
+    background: transparent;
+  }
+
+
+  .clock {
+    .revealer {
+      padding-right: 5px;
+    }
+  }
+
+  .client-title {
+    @include module;
+  }
+}
