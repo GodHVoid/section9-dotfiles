@@ -30,7 +30,7 @@ const WidgetActions = () => {
       class="widget-actions"
       spacing={5}
     >
-      <For each={globalSettings(({ rightPanel }) => rightPanel.widgets)}>
+      <For each={globalSettings(({ rightPanel }) => rightPanel.widgets.filter((widget) => widget.enabled))}>
         {(widget: WidgetSelector) => {
           return (
             <togglebutton

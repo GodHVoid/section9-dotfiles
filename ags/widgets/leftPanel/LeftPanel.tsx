@@ -20,7 +20,7 @@ function Panel() {
       class="widget-actions"
       spacing={10}
     >
-      {leftPanelWidgetSelectors.map((widgetSelector) => {
+      {leftPanelWidgetSelectors.filter((widgetSelector) => widgetSelector.enabled).map((widgetSelector) => {
         return (
           <togglebutton
             class={`${widgetSelector.name}`}
@@ -78,7 +78,7 @@ function Panel() {
   });
 
   // PRECREATE INSIDE JSX CONTEXT
-  leftPanelWidgetSelectors.forEach((selector) => {
+  leftPanelWidgetSelectors.filter((selector) => selector.enabled).forEach((selector) => {
     try {
       const widget = (
         <box hexpand vexpand>
