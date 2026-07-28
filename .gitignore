@@ -15,3 +15,6 @@ ags/logs/
 
 # Hyprland crash reports
 hypr/hyprlandCrashReport*
+
+ags/cache/
+ags/logs/
