@@ -16,8 +16,11 @@ export default () =>
           switch (widget.name) {
             case "workspaces":
               return (
-                <box $type="start">
-                  <Workspaces />
+		<box $type="start" spacing={10}>
+		 <box class="section9-identity">
+		  <label label="SECTION 9 // WIRE-TAP" />
+		 </box>
+                 <Workspaces />
                 </box>
               );
             case "information":

@@ -38,3 +38,13 @@
 window.bar {
   background: $background-transparent;
 }
+
+.section9-identity {
+  background: $color6;
+  color: $background;
+  border: 1px solid $color6;
+  border-radius: 2px;
+  padding: 2px 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
