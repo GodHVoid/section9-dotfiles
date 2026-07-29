@@ -1,10 +1,32 @@
 .information {
+  spacing: 4px;
+
   popover {
     background: transparent;
   }
 
+  button {
+    min-height: 20px;
+    padding: 0 6px;
+
+    color: rgba($foreground, 0.82);
+    background: rgba($background, 0.35);
+
+    border: 1px solid rgba($color6, 0.18);
+    border-radius: 2px;
+
+    &:hover {
+      color: $color6;
+      background: rgba($color6, 0.08);
+      border-color: rgba($color6, 0.5);
+    }
+  }
 
   .clock {
+    color: $color6;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
     .revealer {
       padding-right: 5px;
     }
@@ -12,5 +34,8 @@
 
   .client-title {
     @include module;
+
+    color: rgba($foreground, 0.82);
+    border-radius: 2px;
   }
 }
