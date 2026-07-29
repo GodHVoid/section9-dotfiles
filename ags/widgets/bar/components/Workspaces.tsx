@@ -372,7 +372,7 @@ const Special = () => (
 
 export default ({ halign }: { halign?: Gtk.Align | Accessor<Gtk.Align> }) => {
   return (
-    <box class="workspaces" spacing={5} halign={halign}>
+    <box class="workspaces" spacing={2} halign={halign}>
       {/* <OverView /> */}
       <Special />
       <Workspaces />

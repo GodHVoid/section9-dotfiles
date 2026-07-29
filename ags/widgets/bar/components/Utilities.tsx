@@ -24,7 +24,7 @@ const hyprland = Hyprland.get_default();
 function Tray() {
   const tray = AstalTray.get_default();
   const items = createBinding(tray, "items");
-  const MAX_VISIBLE = 3;
+  const MAX_VISIBLE = 2;
 
   const init = (btn: Gtk.MenuButton, item: AstalTray.TrayItem) => {
     btn.menuModel = item.menuModel;
@@ -40,7 +40,7 @@ function Tray() {
 
   return (
     <box class="system-tray">
-      <box spacing={2}>
+      <box spacing={5}>
         <For each={visibleItems}>
           {(item) => (
             <menubutton
@@ -56,7 +56,7 @@ function Tray() {
           )}
         </For>
       </box>
-      <box spacing={2}>
+      <box spacing={5}>
         <With value={hasHidden}>
           {(hidden) =>
             hidden && (
@@ -92,7 +92,7 @@ function Tray() {
                           }}
                           tooltipText={item.tooltip_text}
                         >
-                          <box spacing={8}>
+                          <box spacing={2}>
                             <image
                               pixelSize={11}
                               gicon={createBinding(item, "gicon")}
@@ -172,7 +172,7 @@ function ResourceMonitor() {
       />
       <With value={systemResourcesData}>
         {(res) => (
-          <box spacing={10}>
+          <box spacing={2}>
             <CircularProgress
               visible={res?.cpuLoad !== undefined}
               tooltipText={`CPU Usage ${res?.cpuLoad}%`}
@@ -220,7 +220,7 @@ function ControlPanelButton() {
 
 export default ({ halign }: { halign?: Gtk.Align | Accessor<Gtk.Align> }) => {
   return (
-    <box class="utilities" spacing={5} halign={halign}>
+    <box class="utilities" spacing={2} halign={halign}>
       <Battery />
       <BrightnessWidget />
       <Volume />

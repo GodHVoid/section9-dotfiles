@@ -67,7 +67,7 @@ function Clock() {
 }
 export default ({ halign }: { halign?: Gtk.Align | Accessor<Gtk.Align> }) => {
   return (
-    <box class="information" spacing={5} halign={halign}>
+    <box class="information" spacing={2} halign={halign}>
       <box
         visible={createBinding(
           mpris,
