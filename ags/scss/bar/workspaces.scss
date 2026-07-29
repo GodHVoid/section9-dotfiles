@@ -210,3 +210,41 @@
     background: $background;
   }
 }
+.workspaces {
+  spacing: 3px;
+}
+
+.workspaces button {
+  min-width: 22px;
+  min-height: 20px;
+  padding: 0 5px;
+
+  color: rgba($foreground, 0.65);
+  background: transparent;
+
+  border: 1px solid rgba($color6, 0.20);
+  border-radius: 2px;
+}
+
+.workspaces button:hover {
+  color: $color6;
+  background: rgba($color6, 0.08);
+  border-color: rgba($color6, 0.55);
+}
+
+.workspaces button.focused,
+.workspaces button.active,
+.workspaces button.is-focused {
+  color: $background;
+  background: $color6;
+  border-color: $color6;
+}
+
+.workspaces button.occupied {
+  color: $foreground;
+  border-color: rgba($color6, 0.40);
+}
+
+.workspaces button.empty {
+  color: rgba($foreground, 0.35);
+}
