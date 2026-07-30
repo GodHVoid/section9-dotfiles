@@ -1,23 +1,43 @@
 .left-panel {
-  @extend .panel;
-  margin-left: 5px;
+  background: rgba($background, 0.96);
+  border: 1px solid rgba($color6, 0.4);
+  border-left: none;
+  border-radius: 0 3px 3px 0;
 
-  .main-content > * {
-    animation: opacity-in 0.6s ease-out;
+  .main-content {
+    padding: 8px;
+    background: rgba($background, 0.55);
   }
 
-  .bottom-eventbox:hover .bottom-bar {
-    background-color: $background-secondary;
+  .panel-actions {
+    padding: 6px 4px;
+    background: rgba($color0, 0.75);
+    border-right: 1px solid rgba($color6, 0.22);
   }
 
-  .widget-actions .Donations {
-    &:not(:checked) {
-      color: #052d49;
-      background: #f96854;
+  .widget-actions {
+    togglebutton {
+      min-width: 34px;
+      min-height: 34px;
+      padding: 3px;
+
+      color: rgba($foreground, 0.75);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 2px;
+
+      &:hover,
+      &:focus {
+        color: $color6;
+        background: rgba($color6, 0.08);
+        border-color: rgba($color6, 0.35);
+      }
+
+      &:checked {
+        color: $color6;
+        background: rgba($color6, 0.14);
+        border-color: rgba($color6, 0.65);
+      }
     }
-
-    // &:checked {
-    //   box-shadow: 0 0 6px rgba(60, 167, 244, 0.4);
-    // }
   }
 }

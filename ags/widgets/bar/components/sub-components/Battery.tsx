@@ -43,7 +43,7 @@ export default () => {
         [percent, createBinding(powerprofiles, "activeProfile")], 
         (p, profile) => `Battery: ${p} \nProfile: ${profile}`
       )}
-      $={(self) => connectPopoverEvents(self, "barWindow", popover)}
+      $={(self) => connectPopoverEvents(self, "barWindow")}
     >
       <box spacing={5} class="battery">
         <image iconName={createBinding(battery, "iconName")} />

@@ -1,35 +1,66 @@
 .app-launcher {
   min-height: 600px;
+
+  background: rgba($background, 0.96);
+  border: 1px solid rgba($color6, 0.55);
+  border-radius: 3px;
+
   button {
     padding: 1em;
     background-color: $background-transparent;
+    border: 1px solid transparent;
+    border-radius: 2px;
+
     &:hover {
-      background-color: $background-semi-transparent;
+      color: $color6;
+      background-color: rgba($color6, 0.08);
+      border-color: rgba($color6, 0.35);
     }
 
-    // animation: opacity-in 0.4s ease-in;
     .description {
       color: $foreground-tertiary;
       font-size: 0.9em;
       opacity: 0.8;
     }
+
     .argument {
       color: $foreground-secondary;
     }
+
     &:focus {
       @include button-checked;
+      border-color: $color6;
+
       .argument {
         color: $background-secondary;
       }
+
       .description {
         color: $background-tertiary;
       }
     }
   }
 
+  entry {
+    color: $foreground;
+    background: rgba($color0, 0.85);
+    border: 1px solid rgba($color6, 0.35);
+    border-radius: 2px;
+    padding: 8px 12px;
+    caret-color: $color6;
+
+    &:focus {
+      border-color: $color6;
+      box-shadow: 0 0 0 1px rgba($color6, 0.2);
+    }
+  }
+
   .center {
     @include module;
     padding: 10px;
+    border-radius: 3px;
+    border: 1px solid rgba($color6, 0.22);
+
     .help {
       font-size: 1.1em;
       font-weight: bold;
@@ -38,6 +69,7 @@
       > box {
         @include module;
         padding: 10px;
+        border-radius: 2px;
       }
 
       .description {
@@ -52,13 +84,12 @@
     }
   }
 
-  .quick-apps {
-    @include module;
-    padding: 10px;
-  }
+  .quick-apps,
   .history {
     @include module;
     padding: 10px;
+    border-radius: 3px;
+    border: 1px solid rgba($color6, 0.18);
   }
 
   .app-header {
@@ -69,7 +100,14 @@
     .header-title {
       font-weight: bold;
       font-size: 1.1em;
-      color: $foreground-secondary;
+      color: $color6;
+      letter-spacing: 0.7px;
     }
+  }
+
+  .command {
+    color: $color6;
+    font-family: monospace;
+    letter-spacing: 0.5px;
   }
 }

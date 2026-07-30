@@ -112,7 +112,7 @@ export default ({
                         ? "wallpaper-button focused"
                         : "wallpaper-button";
                     })}
-                    css={wallpaper == "" ? "background-color: black" : ""}
+                    css={wallpaper == "" ? "background-color: black;" : ""}
                     onClicked={(self) => {
                       setTargetType("workspace");
                       setSelectedWorkspaceId(workspaceId + 1);

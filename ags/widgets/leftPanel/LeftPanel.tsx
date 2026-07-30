@@ -78,23 +78,31 @@ function Panel() {
   });
 
   // PRECREATE INSIDE JSX CONTEXT
-  leftPanelWidgetSelectors.filter((selector) => selector.enabled).forEach((selector) => {
+  leftPanelWidgetSelectors
+  .filter((selector) => selector.enabled)
+  .forEach((selector) => {
     try {
+      console.log(`[LeftPanel] START: ${selector.name}`);
+
+      const child = selector.widget?.({}) as JSX.Element;
+
+      console.log(`[LeftPanel] CHILD CREATED: ${selector.name}`);
+
       const widget = (
         <box hexpand vexpand>
-          {selector.widget?.({}) as JSX.Element}
+          {child}
         </box>
       ) as Gtk.Widget;
 
+      console.log(`[LeftPanel] WRAPPER CREATED: ${selector.name}`);
+
       widgetCache.set(selector.name, widget);
     } catch (err) {
-      console.error(err);
+      console.error(`[LeftPanel] FAILED: ${selector.name}`, err);
     }
   });
-
   const showWidget = (name: string) => {
     const widget = widgetCache.get(name);
-
     if (!widget) return;
 
     if (!addedWidgets.has(name)) {

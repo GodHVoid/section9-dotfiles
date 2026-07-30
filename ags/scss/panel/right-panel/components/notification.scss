@@ -1,15 +1,21 @@
 .notification {
   @include module;
-  margin: 0px;
-  padding: 5px;
-  // transition: opacity 0.5s ease-out; /* Adjust timing */
-  min-width: 0px;
-  min-height: 0px;
+
+  margin: 0;
+  padding: 6px;
+
+  min-width: 0;
+  min-height: 0;
+
+  background: rgba($background, 0.9);
+  border: 1px solid rgba($color6, 0.2);
+  border-radius: 2px;
 
   &:hover {
-    background-color: $background-semi-transparent;
+    background: rgba($color6, 0.06);
+    border-color: rgba($color6, 0.5);
+
     .top-bar {
-      // background-color: $background-secondary;
       .copy,
       .lock,
       .close,
@@ -20,58 +26,73 @@
   }
 
   .top-bar {
-    padding: 5px;
+    padding: 4px 6px;
 
-    border-radius: 5px;
-    background: $background-transparent;
+    background: rgba($background, 0.45);
+    border-bottom: 1px solid rgba($color6, 0.16);
+    border-radius: 2px;
 
     .app-name {
+      color: $color6;
       font-size: 0.9em;
-      color: $foreground;
+      font-weight: 700;
+      letter-spacing: 0.6px;
     }
 
     .lock,
     .copy,
     .close,
     .expand {
-      padding: 0px 5px;
+      min-width: 20px;
+      min-height: 20px;
+      padding: 0 4px;
+
+      color: rgba($foreground, 0.65);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 2px;
       opacity: 0;
-      background-color: transparent;
 
-      &:hover {
-        background-color: $background-semi-transparent;
+      &:hover,
+      &:focus {
+        color: $color6;
+        background: rgba($color6, 0.1);
+        border-color: rgba($color6, 0.35);
       }
+    }
 
-      // &.close {
-      //   @extend .danger;
-      //   &:not(:hover) {
-      //     background: transparent;
-      //   }
-      // }
+    .close:hover,
+    .close:focus {
+      color: #ff6b6b;
+      border-color: rgba(#ff6b6b, 0.45);
+      background: rgba(#ff6b6b, 0.1);
     }
 
     .time {
+      color: rgba($foreground, 0.55);
       font-size: 0.8em;
-      color: $foreground-secondary;
+      font-family: monospace;
     }
   }
 
-  // &.Spotify .app-name {
-  //   color: $spotify-foreground;
-  // }
   .content {
-    padding: 5px;
+    padding: 7px 6px;
+
     .image,
     .icon {
       -gtk-icon-size: 25px;
-      font-size: 30px;
+
       min-width: 30px;
       min-height: 30px;
-      color: $secondary;
+
+      color: $color6;
+      font-size: 30px;
     }
 
     .title {
-      color: $secondary;
+      color: $foreground;
+      font-weight: 700;
+      letter-spacing: 0.2px;
     }
 
     .body {
@@ -79,31 +100,28 @@
       font-size: 0.9em;
     }
   }
-  .actions {
-    button {
-      background-color: transparent;
 
-      &:hover {
-        background-color: $background-secondary;
+  .actions {
+    padding-top: 3px;
+
+    button {
+      padding: 4px 8px;
+
+      color: rgba($foreground, 0.78);
+      background: transparent;
+      border: 1px solid rgba($color6, 0.16);
+      border-radius: 2px;
+
+      &:hover,
+      &:focus {
+        color: $color6;
+        background: rgba($color6, 0.1);
+        border-color: rgba($color6, 0.4);
       }
 
       &.delete {
         @extend .danger;
       }
     }
-  }
-}
-
-// animation keyframes
-@keyframes background-pop {
-  0% {
-    opacity: 0;
-    min-width: 50px;
-  }
-  50% {
-    background-color: $foreground;
-    color: $background;
-  }
-  100% {
   }
 }
