@@ -166,15 +166,66 @@ scale {
 }
 
 .custom-revealer {
-  @include button;
+  @include module;
 
-  .slider {
-    margin: 0px 5px;
+  min-height: 26px;
+  padding: 2px 6px;
+
+  background: rgba($background, 0.88);
+  border: 1px solid rgba($color6, 0.25);
+  border-radius: 2px;
+
+  &:hover {
+    background: rgba($color6, 0.07);
+    border-color: rgba($color6, 0.55);
+  }
+
+  .content {
+    padding: 0 4px;
   }
 
   .trigger {
-    // @include button;
-    padding: 0px 5px;
+    min-width: 52px;
+    padding: 0 5px;
+
+    color: $color6;
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  .slider {
+    margin: 0 5px;
+    padding: 0;
+
+    trough {
+      min-height: 4px;
+      padding: 0;
+
+      background: rgba($foreground, 0.12);
+      border: 1px solid rgba($color6, 0.2);
+      border-radius: 1px;
+
+      highlight {
+        min-height: 4px;
+
+        background: $color6;
+        border-radius: 1px;
+      }
+
+      slider {
+        min-width: 9px;
+        min-height: 9px;
+        margin: -3px 0;
+
+        background: $foreground;
+        border: 1px solid $color6;
+        border-radius: 1px;
+      }
+
+      slider:hover {
+        background: $color6;
+      }
+    }
   }
 }
 

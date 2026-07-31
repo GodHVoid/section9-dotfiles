@@ -1,5 +1,30 @@
-.notification-popups {
-  padding: 0px;
-  margin: 0px;
-  border-radius: 10px;
+.NotificationPopups {
+  background: transparent;
+
+  .notification-popups {
+    padding: 6px;
+    margin: 6px;
+
+    background: transparent;
+    border-radius: 2px;
+
+    .notification {
+      margin-bottom: 6px;
+
+      background: rgba($background, 0.94);
+      border: 1px solid rgba($color6, 0.42);
+      border-radius: 2px;
+      box-shadow: 0 4px 16px rgba($background, 0.65);
+
+      &:hover {
+        background: rgba($color6, 0.07);
+        border-color: rgba($color6, 0.7);
+        box-shadow: 0 4px 20px rgba($color6, 0.16);
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
