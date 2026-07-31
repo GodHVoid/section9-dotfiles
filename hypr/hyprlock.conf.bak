@@ -136,6 +136,7 @@ input-field {
     fail_text = AUTHORIZATION DENIED // $FAIL // ATTEMPT $ATTEMPTS
 
     rounding = 2
+    fail_transition = 250
 
     capslock_color = rgba(242, 184, 75, 1.0)
     numlock_color = rgba(242, 184, 75, 1.0)
