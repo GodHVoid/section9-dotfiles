@@ -1,0 +1,616 @@
+import QtQuick 2.15
+import QtQuick.Controls 2.0
+import SddmComponents 2.0
+
+import Qt5Compat.GraphicalEffects
+
+Rectangle {
+    id: root
+
+    width: 640
+    height: 480
+    color: "#02080e"
+
+    readonly property color textColor:
+        config.stringValue("basicTextColor") || "#5bdaeb"
+
+    property int currentUsersIndex: userModel.lastIndex
+    property int currentSessionsIndex: sessionModel.lastIndex
+
+    property int usernameRole: Qt.UserRole + 1
+    property int realNameRole: Qt.UserRole + 2
+    property int sessionNameRole: Qt.UserRole + 4
+
+    property string currentUsername:
+        config.boolValue("showUserRealNameByDefault")
+        ? userModel.data(
+              userModel.index(currentUsersIndex, 0),
+              realNameRole
+          )
+        : userModel.data(
+              userModel.index(currentUsersIndex, 0),
+              usernameRole
+          )
+
+    property string currentSession:
+        sessionModel.data(
+            sessionModel.index(currentSessionsIndex, 0),
+            sessionNameRole
+        )
+
+    property int passwordFontSize:
+        config.intValue("passwordFontSize") || 18
+
+    property int usersFontSize:
+        config.intValue("usersFontSize") || 15
+
+    property int sessionsFontSize:
+        config.intValue("sessionsFontSize") || 13
+
+    property int helpFontSize:
+        config.intValue("helpFontSize") || 18
+
+    property string defaultFont:
+        config.stringValue("font") || "monospace"
+
+    property string helpFont:
+        config.stringValue("helpFont") || defaultFont
+
+    property bool authenticationFailed: false
+
+    function usersCycleSelectPrev() {
+        if (currentUsersIndex - 1 < 0)
+            currentUsersIndex = userModel.count - 1
+        else
+            currentUsersIndex--
+    }
+
+    function usersCycleSelectNext() {
+        if (currentUsersIndex >= userModel.count - 1)
+            currentUsersIndex = 0
+        else
+            currentUsersIndex++
+    }
+
+    function sessionsCycleSelectPrev() {
+        if (currentSessionsIndex - 1 < 0)
+            currentSessionsIndex = sessionModel.rowCount() - 1
+        else
+            currentSessionsIndex--
+    }
+
+    function sessionsCycleSelectNext() {
+        if (currentSessionsIndex >= sessionModel.rowCount() - 1)
+            currentSessionsIndex = 0
+        else
+            currentSessionsIndex++
+    }
+
+    function bgFillMode() {
+        switch (config.stringValue("backgroundFillMode")) {
+        case "aspect":
+            return Image.PreserveAspectCrop
+
+        case "fill":
+            return Image.Stretch
+
+        case "tile":
+            return Image.Tile
+
+        case "pad":
+            return Image.Pad
+
+        default:
+            return Image.Pad
+        }
+    }
+
+    Connections {
+        target: sddm
+
+        function onLoginFailed() {
+            authenticationFailed = true
+            passwordInput.clear()
+            passwordInput.forceActiveFocus()
+            failedResetTimer.restart()
+        }
+
+        function onLoginSucceeded() {
+            authenticationFailed = false
+        }
+    }
+
+    Timer {
+        id: failedResetTimer
+
+        interval: 1800
+        repeat: false
+
+        onTriggered: authenticationFailed = false
+    }
+
+    Item {
+        id: mainFrame
+
+        property variant geometry:
+            screenModel.geometry(screenModel.primary)
+
+        x: geometry.x
+        y: geometry.y
+        width: geometry.width
+        height: geometry.height
+
+        Shortcut {
+            sequences: ["Alt+U", "F2"]
+
+            onActivated: {
+                if (!username.visible) {
+                    username.visible = true
+                    return
+                }
+
+                usersCycleSelectNext()
+            }
+        }
+
+        Shortcut {
+            sequences: ["Alt+Ctrl+U", "Ctrl+F2"]
+
+            onActivated: {
+                if (!username.visible) {
+                    username.visible = true
+                    return
+                }
+
+                usersCycleSelectPrev()
+            }
+        }
+
+        Shortcut {
+            sequences: ["Alt+S", "F3"]
+
+            onActivated: {
+                if (!sessionName.visible) {
+                    sessionName.visible = true
+                    return
+                }
+
+                sessionsCycleSelectNext()
+            }
+        }
+
+        Shortcut {
+            sequences: ["Alt+Ctrl+S", "Ctrl+F3"]
+
+            onActivated: {
+                if (!sessionName.visible) {
+                    sessionName.visible = true
+                    return
+                }
+
+                sessionsCycleSelectPrev()
+            }
+        }
+
+        Shortcut {
+            sequence: "F10"
+
+            onActivated: {
+                if (sddm.canSuspend)
+                    sddm.suspend()
+            }
+        }
+
+        Shortcut {
+            sequence: "F11"
+
+            onActivated: {
+                if (sddm.canPowerOff)
+                    sddm.powerOff()
+            }
+        }
+
+        Shortcut {
+            sequence: "F12"
+
+            onActivated: {
+                if (sddm.canReboot)
+                    sddm.reboot()
+            }
+        }
+
+        Shortcut {
+            sequence: "F1"
+            onActivated: helpMessage.visible = !helpMessage.visible
+        }
+
+        Rectangle {
+            id: background
+
+            anchors.fill: parent
+            color: config.stringValue("backgroundFill") || "#02080e"
+
+            Image {
+                id: image
+
+                anchors.fill: parent
+                source: config.stringValue("background")
+                smooth: true
+                fillMode: bgFillMode()
+                visible: source.toString().length > 0
+            }
+
+            FastBlur {
+                anchors.fill: image
+                source: image
+                radius: config.intValue("blurRadius")
+                visible: image.visible &&
+                         config.intValue("blurRadius") > 0
+            }
+        }
+
+        Timer {
+            id: clockTimer
+
+            interval: 1000
+            running: true
+            repeat: true
+
+            onTriggered: {
+                clockText.text =
+                    Qt.formatDateTime(new Date(), "hh:mm")
+
+                dateText.text =
+                    Qt.formatDateTime(
+                        new Date(),
+                        "yyyy-MM-dd // dddd"
+                    )
+            }
+        }
+
+        Text {
+            id: clockText
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -245
+
+            text: Qt.formatDateTime(new Date(), "hh:mm")
+            color: "#5bdaeb"
+
+            font.family: defaultFont
+            font.pixelSize: 62
+            font.weight: Font.Light
+        }
+
+        Text {
+            id: dateText
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -195
+
+            text: Qt.formatDateTime(
+                new Date(),
+                "yyyy-MM-dd // dddd"
+            )
+
+            color: "#aac3cc"
+            font.family: defaultFont
+            font.pixelSize: 14
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -115
+
+            text: "SECTION 9 // CYBERBRAIN AUTHORIZATION"
+            color: "#5bdaeb"
+
+            font.family: defaultFont
+            font.pixelSize: 20
+            font.weight: Font.Medium
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -72
+
+            text: "USER: " +
+                  String(currentUsername || "Kid_A").toUpperCase()
+
+            color: "#d7e8ee"
+            font.family: defaultFont
+            font.pixelSize: 15
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -43
+
+            text: "IDENTITY VERIFICATION REQUIRED"
+            color: "#87a6b0"
+
+            font.family: defaultFont
+            font.pixelSize: 11
+            font.letterSpacing: 1
+        }
+
+        Rectangle {
+            id: passwordContainer
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 20
+
+            width: Math.min(
+                420,
+                parent.width *
+                (config.realValue("passwordInputWidth") || 0.31)
+            )
+
+            height: 54
+            radius: config.intValue("passwordInputRadius") || 2
+
+            color:
+                config.stringValue("passwordInputBackground") ||
+                "#030e15"
+
+            border.width:
+                config.intValue("passwordInputBorderWidth") || 2
+
+            border.color:
+                authenticationFailed
+                ? "#ff5b69"
+                : config.stringValue("passwordInputBorderColor") ||
+                  "#5bdaeb"
+
+            Behavior on border.color {
+                ColorAnimation {
+                    duration: 150
+                }
+            }
+
+            TextInput {
+                id: passwordInput
+
+                anchors.fill: parent
+                anchors.leftMargin: 18
+                anchors.rightMargin: 18
+
+                focus: true
+                clip: true
+
+                echoMode:
+                    config.boolValue("passwordMask")
+                    ? TextInput.Password
+                    : TextInput.Normal
+
+                passwordCharacter:
+                    config.stringValue("passwordCharacter") || "*"
+
+                cursorVisible:
+                    config.boolValue("passwordInputCursorVisible")
+
+                color:
+                    config.stringValue("passwordTextColor") ||
+                    "#daeef2"
+
+                selectionColor: "#5bdaeb"
+                selectedTextColor: "#02080e"
+
+                horizontalAlignment: TextInput.AlignHCenter
+                verticalAlignment: TextInput.AlignVCenter
+
+                font.family: defaultFont
+                font.pixelSize: passwordFontSize
+                font.bold: true
+                font.letterSpacing: 4
+
+                onAccepted: {
+                    if (text !== "" ||
+                        config.boolValue("passwordAllowEmpty")) {
+
+                        sddm.login(
+                            userModel.data(
+                                userModel.index(
+                                    currentUsersIndex,
+                                    0
+                                ),
+                                usernameRole
+                            ) || "123test",
+                            text,
+                            currentSessionsIndex
+                        )
+                    }
+                }
+
+                Keys.onEscapePressed: {
+                    clear()
+                    authenticationFailed = false
+                }
+
+                cursorDelegate: Rectangle {
+                    id: passwordInputCursor
+
+                    width: 3
+                    height: passwordInput.height / 2
+
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    visible:
+                        config.boolValue(
+                            "passwordInputCursorVisible"
+                        )
+
+                    color:
+                        config.stringValue(
+                            "passwordCursorColor"
+                        ) || "#5bdaeb"
+
+                    SequentialAnimation on opacity {
+                        running:
+                            config.boolValue(
+                                "cursorBlinkAnimation"
+                            )
+
+                        loops: Animation.Infinite
+
+                        NumberAnimation {
+                            from: 1
+                            to: 1
+                            duration: 500
+                        }
+
+                        NumberAnimation {
+                            from: 0
+                            to: 0
+                            duration: 400
+                        }
+                    }
+                }
+            }
+
+            Text {
+                anchors.centerIn: parent
+
+                visible:
+                    passwordInput.text.length === 0 &&
+                    !passwordInput.activeFocus
+
+                text: "CYBERBRAIN PASSPHRASE"
+                color: "#8797a2"
+
+                font.family: defaultFont
+                font.pixelSize: 12
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+
+                onClicked: passwordInput.forceActiveFocus()
+            }
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 98
+
+            text:
+                authenticationFailed
+                ? "AUTHORIZATION DENIED"
+                : "SECURE CHANNEL ACTIVE // ENCRYPTED SESSION"
+
+            color:
+                authenticationFailed
+                ? "#ff5b69"
+                : "#5bdaeb"
+
+            font.family: defaultFont
+            font.pixelSize: 11
+            font.letterSpacing: 1
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 28
+
+            text: "PUBLIC SECURITY SECTION 9"
+            color: "#829aa2"
+
+            font.family: defaultFont
+            font.pixelSize: 10
+            font.letterSpacing: 1
+        }
+
+        UsersChoose {
+            id: username
+
+            text: currentUsername
+
+            visible: false
+
+            width:
+                mainFrame.width / 2.5 / 48 *
+                usersFontSize
+
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: passwordContainer.top
+                bottomMargin: 40
+            }
+
+            onPrevClicked: usersCycleSelectPrev()
+            onNextClicked: usersCycleSelectNext()
+        }
+
+        SessionsChoose {
+            id: sessionName
+
+            text: currentSession
+
+            visible: false
+
+            width:
+                mainFrame.width / 2.5 / 24 *
+                sessionsFontSize
+
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: 30
+            }
+
+            onPrevClicked: sessionsCycleSelectPrev()
+            onNextClicked: sessionsCycleSelectNext()
+        }
+
+        Text {
+            id: helpMessage
+
+            visible: false
+
+            text:
+                "Show help - F1\n" +
+                "Next user - F2 or Alt+U\n" +
+                "Previous user - Ctrl+F2 or Alt+Ctrl+U\n" +
+                "Next session - F3 or Alt+S\n" +
+                "Previous session - Ctrl+F3 or Alt+Ctrl+S\n" +
+                "Suspend - F10\n" +
+                "Power off - F11\n" +
+                "Reboot - F12"
+
+            color: textColor
+
+            font.pixelSize: helpFontSize
+            font.family: helpFont
+
+            anchors {
+                top: parent.top
+                topMargin: 30
+                left: parent.left
+                leftMargin: 30
+            }
+        }
+
+        Component.onCompleted: {
+            passwordInput.forceActiveFocus()
+        }
+    }
+
+    Loader {
+        active: config.boolValue("hideCursor") || false
+        anchors.fill: parent
+
+        sourceComponent: MouseArea {
+            enabled: false
+            cursorShape: Qt.BlankCursor
+        }
+    }
+}

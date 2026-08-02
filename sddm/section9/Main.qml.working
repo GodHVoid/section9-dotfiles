@@ -1,0 +1,451 @@
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import SddmComponents 2.0
+
+Rectangle {
+    id: root
+
+    width: 640
+    height: 480
+    color: "#02080e"
+
+    /*
+     * Use the last successful SDDM user instead of depending on
+     * userModel.lastIndex being initialized.
+     */
+    property string loginUser:
+        String(userModel.lastUser || "Kid_A")
+
+    /*
+     * Use the last successful session. Fall back to the first session
+     * when SDDM has not stored one yet.
+     */
+    property int loginSession:
+        sessionModel.lastIndex >= 0
+        ? sessionModel.lastIndex
+        : 0
+
+    property bool authenticationPending: false
+    property bool authenticationFailed: false
+    property bool authenticationSucceeded: false
+    property int failedAttempts: 0
+
+    function submitLogin() {
+        /*
+         * Prevent multiple Enter presses from creating overlapping PAM
+         * authentication requests.
+         */
+        if (authenticationPending)
+            return
+
+        if (passwordInput.text.length === 0)
+            return
+
+        authenticationPending = true
+        authenticationFailed = false
+        authenticationSucceeded = false
+
+        sddm.login(
+            loginUser,
+            passwordInput.text,
+            loginSession
+        )
+    }
+
+    Connections {
+        target: sddm
+
+        function onLoginFailed() {
+            authenticationPending = false
+            authenticationSucceeded = false
+            authenticationFailed = true
+            failedAttempts += 1
+
+            passwordInput.clear()
+            passwordInput.forceActiveFocus()
+            failureReset.restart()
+        }
+
+        function onLoginSucceeded() {
+            /*
+             * SDDM should now close the greeter and launch Hyprland.
+             * Keep input disabled so another request cannot be submitted
+             * during the handoff.
+             */
+            authenticationSucceeded = true
+            authenticationFailed = false
+            authenticationPending = true
+        }
+    }
+
+    Timer {
+        id: failureReset
+        interval: 1800
+        repeat: false
+
+        onTriggered: authenticationFailed = false
+    }
+
+    Item {
+        id: mainFrame
+
+        property var geometry:
+            screenModel.geometry(screenModel.primary)
+
+        x: geometry.x
+        y: geometry.y
+        width: geometry.width
+        height: geometry.height
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#02080e"
+        }
+
+        Timer {
+            id: clockTimer
+
+            interval: 1000
+            running: true
+            repeat: true
+
+            onTriggered: {
+                clockText.text =
+                    Qt.formatDateTime(new Date(), "HH:mm")
+
+                dateText.text =
+                    Qt.formatDateTime(
+                        new Date(),
+                        "yyyy-MM-dd // dddd"
+                    )
+            }
+        }
+
+        Text {
+            id: clockText
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -245
+
+            text: Qt.formatDateTime(new Date(), "HH:mm")
+            color: "#5bdaeb"
+
+            font.family: "monospace"
+            font.pixelSize: 62
+            font.weight: Font.Light
+        }
+
+        Text {
+            id: dateText
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -195
+
+            text: Qt.formatDateTime(
+                new Date(),
+                "yyyy-MM-dd // dddd"
+            )
+
+            color: "#aac3cc"
+            font.family: "monospace"
+            font.pixelSize: 14
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -115
+
+            text: "SECTION 9 // CYBERBRAIN AUTHORIZATION"
+            color: "#5bdaeb"
+
+            font.family: "monospace"
+            font.pixelSize: 20
+            font.weight: Font.Medium
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -72
+
+            text: "USER: " + root.loginUser.toUpperCase()
+            color: "#d7e8ee"
+
+            font.family: "monospace"
+            font.pixelSize: 15
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -43
+
+            text: "IDENTITY VERIFICATION REQUIRED"
+            color: "#87a6b0"
+
+            font.family: "monospace"
+            font.pixelSize: 11
+            font.letterSpacing: 1
+        }
+
+        Rectangle {
+            id: passwordContainer
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 20
+
+            width: Math.min(420, parent.width * 0.31)
+            height: 54
+            radius: 2
+
+            color: "#030e15"
+
+            border.width: 2
+            border.color: {
+                if (authenticationFailed)
+                    return "#ff5b69"
+
+                if (authenticationSucceeded)
+                    return "#50e6aa"
+
+                if (authenticationPending)
+                    return "#50e6aa"
+
+                if (keyboard.capsLock)
+                    return "#f2b84b"
+
+                return "#5bdaeb"
+            }
+
+            Behavior on border.color {
+                ColorAnimation {
+                    duration: 150
+                }
+            }
+
+            Text {
+                anchors.centerIn: parent
+
+                visible:
+                    passwordInput.text.length === 0 &&
+                    !authenticationPending
+
+                text:
+                    keyboard.capsLock
+                    ? "WARNING // CAPS LOCK ACTIVE"
+                    : "CYBERBRAIN PASSPHRASE"
+
+                color:
+                    keyboard.capsLock
+                    ? "#f2b84b"
+                    : "#8797a2"
+
+                font.family: "monospace"
+                font.pixelSize: 12
+            }
+
+            TextInput {
+                id: passwordInput
+
+                anchors.fill: parent
+                anchors.leftMargin: 18
+                anchors.rightMargin: 18
+
+                focus: true
+                activeFocusOnTab: true
+                clip: true
+
+                enabled: !authenticationPending
+                readOnly: authenticationPending
+
+                echoMode: TextInput.Password
+                passwordCharacter: "•"
+
+                color: "#daeef2"
+                selectionColor: "#5bdaeb"
+                selectedTextColor: "#02080e"
+
+                horizontalAlignment: TextInput.AlignHCenter
+                verticalAlignment: TextInput.AlignVCenter
+
+                font.family: "monospace"
+                font.pixelSize: 18
+                font.bold: true
+                font.letterSpacing: 4
+
+                cursorVisible:
+                    activeFocus &&
+                    !authenticationPending
+
+                onAccepted: root.submitLogin()
+
+                Keys.onEscapePressed: {
+                    if (!authenticationPending) {
+                        clear()
+                        authenticationFailed = false
+                    }
+                }
+            }
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 98
+
+            text: {
+                if (authenticationSucceeded)
+                    return "AUTHORIZATION ACCEPTED // STARTING SESSION"
+
+                if (authenticationPending)
+                    return "VERIFYING CYBERBRAIN IDENTITY"
+
+                if (authenticationFailed)
+                    return "AUTHORIZATION DENIED // ATTEMPT " +
+                           failedAttempts
+
+                if (keyboard.capsLock)
+                    return "WARNING // CAPS LOCK ACTIVE"
+
+                return "AUTHENTICATION CHANNEL ACTIVE"
+            }
+
+            color: {
+                if (authenticationSucceeded)
+                    return "#50e6aa"
+
+                if (authenticationPending)
+                    return "#50e6aa"
+
+                if (authenticationFailed)
+                    return "#ff5b69"
+
+                if (keyboard.capsLock)
+                    return "#f2b84b"
+
+                return "#5bdaeb"
+            }
+
+            font.family: "monospace"
+            font.pixelSize: 11
+            font.letterSpacing: 1
+        }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 28
+
+            text: "PUBLIC SECURITY SECTION 9"
+            color: "#829aa2"
+
+            font.family: "monospace"
+            font.pixelSize: 10
+            font.letterSpacing: 1
+        }
+
+        Text {
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: 24
+            anchors.bottomMargin: 18
+
+            text: "NODE: WIRE-TAP"
+            color: "#70829aa2"
+
+            font.family: "monospace"
+            font.pixelSize: 9
+        }
+
+        Row {
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.rightMargin: 24
+            anchors.bottomMargin: 18
+
+            spacing: 18
+
+            Text {
+                text: "[ REBOOT ]"
+                visible: sddm.canReboot
+
+                color:
+                    rebootMouse.containsMouse
+                    ? "#5bdaeb"
+                    : "#829aa2"
+
+                font.family: "monospace"
+                font.pixelSize: 10
+
+                MouseArea {
+                    id: rebootMouse
+
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    enabled: !authenticationPending
+
+                    onClicked: sddm.reboot()
+                }
+            }
+
+            Text {
+                text: "[ SHUTDOWN ]"
+                visible: sddm.canPowerOff
+
+                color:
+                    shutdownMouse.containsMouse
+                    ? "#ff5b69"
+                    : "#829aa2"
+
+                font.family: "monospace"
+                font.pixelSize: 10
+
+                MouseArea {
+                    id: shutdownMouse
+
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    enabled: !authenticationPending
+
+                    onClicked: sddm.powerOff()
+                }
+            }
+        }
+
+        Shortcut {
+            sequence: "F11"
+
+            onActivated: {
+                if (sddm.canPowerOff &&
+                    !authenticationPending) {
+                    sddm.powerOff()
+                }
+            }
+        }
+
+        Shortcut {
+            sequence: "F12"
+
+            onActivated: {
+                if (sddm.canReboot &&
+                    !authenticationPending) {
+                    sddm.reboot()
+                }
+            }
+        }
+
+        Component.onCompleted: {
+            passwordInput.forceActiveFocus()
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        enabled: false
+        cursorShape: Qt.BlankCursor
+    }
+}
