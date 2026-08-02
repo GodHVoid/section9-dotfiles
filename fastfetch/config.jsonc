@@ -1,0 +1,152 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+  "logo": {
+    "padding": {
+      "right": 2
+    }
+  },
+
+  "display": {
+    "separator": "  ",
+    "key": {
+	"width": 14
+    }
+  },
+
+  "modules": [
+    {
+      "type": "title",
+      "format": "{#6}╭─[ SECTION 9 // {#}{user-name-colored}@{host-name-colored}{#6} ]"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│ {#7}PUBLIC SECURITY INTELLIGENCE INTERFACE"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│ {#2}STATUS        OPERATIONAL"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│ {#7}SYSTEM"
+    },
+
+    {
+      "type": "os",
+      "key": "{#6}│  {#7}PLATFORM"
+    },
+
+    {
+      "type": "kernel",
+      "key": "{#6}│  {#7}KERNEL"
+    },
+
+    {
+      "type": "uptime",
+      "key": "{#6}│  {#7}UPTIME"
+    },
+
+    {
+      "type": "packages",
+      "key": "{#6}│  {#7}PACKAGES",
+      "format": "{all}"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│ {#7}SESSION"
+    },
+
+    {
+      "type": "wm",
+      "key": "{#6}│  {#7}COMPOSITOR"
+    },
+
+    {
+      "type": "de",
+      "key": "{#6}│  {#7}ENVIRONMENT"
+    },
+
+    {
+      "type": "custom",
+      "key": "{#6}│  {#7}INTERFACE",
+      "format": "Section 9"
+    },
+
+    {
+      "type": "display",
+      "key": "{#6}│  {#7}DISPLAY"
+    },
+
+    {
+      "type": "shell",
+      "key": "{#6}│  {#7}SHELL"
+    },
+
+    {
+      "type": "terminal",
+      "key": "{#6}│  {#7}TERMINAL"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│ {#7}HARDWARE"
+    },
+
+    {
+      "type": "cpu",
+      "key": "{#6}│  {#7}PROCESSOR"
+    },
+
+    {
+      "type": "gpu",
+      "key": "{#6}│  {#7}GRAPHICS"
+    },
+
+    {
+      "type": "memory",
+      "key": "{#6}│  {#7}MEMORY"
+    },
+
+    {
+      "type": "disk",
+      "key": "{#6}│  {#7}STORAGE",
+      "folders": "/"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}│"
+    },
+
+    {
+      "type": "colors",
+      "key": "{#6}│",
+      "symbol": "circle"
+    },
+
+    {
+      "type": "custom",
+      "format": "{#6}╰─[ SECURE CHANNEL ACTIVE ]"
+    }
+  ]
+}
