@@ -1,0 +1,48 @@
+format = """[\\[ SECTION 9 // GHOST-LINK \\]](bold bright-cyan) $username[@](bold cyan)$hostname [::](dimmed cyan) $directory$git_branch$git_status$character"""
+command_timeout = 1000
+
+[username]
+show_always = true
+style_user = "bold bright-cyan"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+style = "bold cyan"
+format = "[$hostname]($style)"
+
+[directory]
+style = "bold white"
+home_symbol = "~"
+truncation_length = 5
+truncate_to_repo = false
+read_only = " LOCKED"
+read_only_style = "bold red"
+format = "[$path]($style) "
+
+[git_branch]
+disabled = false
+symbol = ""
+style = "bold bright-magenta"
+format = "[git:$branch]($style) "
+
+[git_status]
+disabled = false
+style = "bold yellow"
+format = "[$all_status$ahead_behind]($style)"
+conflicted = "CONFLICT "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇡${ahead_count} ⇣${behind_count} "
+up_to_date = ""
+untracked = "? "
+stashed = "STASH "
+modified = "× "
+staged = "● "
+renamed = "» "
+deleted = "✘ "
+
+[character]
+success_symbol = "[❯](bold bright-cyan) "
+error_symbol = "[❯](bold bright-red) "
+vimcmd_symbol = "[❮](bold bright-green) "
