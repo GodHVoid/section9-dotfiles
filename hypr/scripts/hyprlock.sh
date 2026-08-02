@@ -1,14 +1,37 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-hyprDir=$HOME/.config/hypr
-hyprlock=$hyprDir/hyprlock.conf
+set -u
 
-# sed -i "/background {/,/}/ s|path = .*$|path = $current_wallpaper|" $hyprlock
+lock_config="$HOME/.config/hyprlock/section9.conf"
+mode="${1:-lock}"
 
-if [ $1 == "suspend" ]; then
-    systemctl suspend
+if [[ ! -f "$lock_config" ]]; then
+  printf 'Hyprlock config missing: %s\n' "$lock_config" >&2
+  exit 1
 fi
 
-# hyprctl dispatch dpms on
+case "$mode" in
+  lock)
+    exec hyprlock \
+      --config "$lock_config" \
+      --immediate-render
+    ;;
 
-hyprlock
+  suspend)
+    hyprlock \
+      --config "$lock_config" \
+      --immediate-render \
+      --no-fade-in &
+
+    lock_pid=$!
+    sleep 0.5
+
+    systemctl suspend
+    wait "$lock_pid"
+    ;;
+
+  *)
+    printf 'Usage: %s [lock|suspend]\n' "$0" >&2
+    exit 2
+    ;;
+esac

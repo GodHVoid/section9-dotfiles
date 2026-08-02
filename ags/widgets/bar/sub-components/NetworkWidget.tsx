@@ -16,26 +16,30 @@ function updateActivity(triggerPulse = false) {
   const wired = network.wired;
 
   let connected = false;
-  let name = "";
-  let type: "wifi" | "ethernet" | "vpn" | "unknown" = "wifi";
+  let name = "Disconnected";
+  let type: "wifi" | "ethernet" | "vpn" | "unknown" = "unknown";
 
-  // 1. Check Wired Connection state using explicit Astal Network Enums
-  if (wired && wired.internet === AstalNetwork.Internet.CONNECTED) {
+  // Prefer an active Wi-Fi connection over wired/bridge interfaces.
+  if (
+    wifi &&
+    wifi.ssid &&
+    wifi.internet === AstalNetwork.Internet.CONNECTED
+  ) {
+    connected = true;
+    name = wifi.ssid;
+    type = "wifi";
+  } else if (
+    wired &&
+    wired.internet === AstalNetwork.Internet.CONNECTED
+  ) {
     connected = true;
     name = "Ethernet";
     type = "ethernet";
-  }
-  // 2. Check Wi-Fi Connection state using explicit Astal Network Enums
-  else if (wifi && wifi.internet === AstalNetwork.Internet.CONNECTED) {
-    connected = true;
-    name = wifi.ssid || "Wi-Fi";
-    type = "wifi";
-  } else {
+  } else if (wifi) {
     connected = false;
-    name = wifi ? "Disconnected" : "No Device";
-    type = wifi ? "wifi" : "unknown";
+    name = "Disconnected";
+    type = "wifi";
   }
-
   // Push state updates to reactive variables
   setNetworkActivity({ connected, name, type });
 

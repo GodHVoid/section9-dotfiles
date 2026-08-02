@@ -24,8 +24,6 @@ const predefinedCommands = [
     label: "🔔 Notification",
     command: "notify-send 'Timer Alert' 'Scheduled task executed'",
   },
-  { label: "🔒 Lock Screen", command: "hyprlock" },
-  { label: "💤 Suspend", command: "systemctl suspend" },
   { label: "🔄 Reboot", command: "reboot" },
   { label: "⚡ Shutdown", command: "shutdown -h now" },
 ];
