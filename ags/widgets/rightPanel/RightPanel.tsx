@@ -251,6 +251,7 @@ export default ({
       name={`right-panel-${monitorName}`}
       namespace="right-panel"
       application={App}
+      css={"background-color: #02080e;"}
       class={globalSettings(({ rightPanel }) =>
         rightPanel.exclusivity ? "right-panel exclusive" : "right-panel normal",
       )}

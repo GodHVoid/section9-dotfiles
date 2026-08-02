@@ -1,0 +1,57 @@
+// Section 9 fixed AGS palette.
+// Color variables only—do not place widget selectors in this file.
+
+// Disable transparency while preserving original widget formatting.
+$OPACITY: 1;
+
+// Core palette
+$background: #02080e;
+$foreground: #daeef2;
+$cursor: #5bdaeb;
+
+$secondary: #5bdaeb;
+$tertiary: #50e6aa;
+$grey: #829aa2;
+
+$red: #ff5b69;
+$green: #50e6aa;
+$blue: #5bdaeb;
+$orange: #f2b84b;
+
+// Palette
+$color0: #02080e;
+$color1: #ff5b69;
+$color2: #50e6aa;
+$color3: #f2b84b;
+$color4: #5bdaeb;
+$color5: #a78bfa;
+$color6: #5bdaeb;
+$color7: #daeef2;
+
+$color8: #52666e;
+$color9: #ff7b86;
+$color10: #73efbe;
+$color11: #ffd477;
+$color12: #85e8f2;
+$color13: #c5a7ff;
+$color14: #93f4ff;
+$color15: #ffffff;
+
+// Derived colors used by AGS widgets
+$background-mix: mix($background, $color1, 18%);
+
+$background-transparent: rgba($background, 1);
+$background-semi-transparent: rgba($background, 1);
+
+$background-secondary: mix($background, $secondary, 14%);
+$foreground-secondary: mix($foreground, $secondary, 72%);
+
+$background-tertiary: mix($background, $tertiary, 14%);
+$foreground-tertiary: mix($foreground, $tertiary, 72%);
+
+$blue-background: rgba($blue, 0.18);
+$orange-background: rgba($orange, 0.18);
+
+$spotify: $green;
+$spotify-background: rgba($green, 0.18);
+$spotify-foreground: $foreground;

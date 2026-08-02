@@ -157,6 +157,7 @@ export default ({
       name={`left-panel-${monitorName}`}
       namespace="left-panel"
       application={App}
+      css={"background-color: #02080e;"}
       class={globalSettings(({ leftPanel }) =>
         leftPanel.exclusivity ? "left-panel exclusive" : "left-panel normal",
       )}

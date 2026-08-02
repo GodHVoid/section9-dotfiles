@@ -1,25 +1,23 @@
-// Section 9 — Ghost in the Shell palette
+// Section 9 fixed palette
 
-// Core
-$background: #071015;
-$foreground: #c7e2e5;
-$cursor: #58e1e8;
+$background: #02080e;
+$foreground: #daeef2;
+$cursor: #5bdaeb;
 
-// ANSI-style palette
-$color0:  #071015; // black / background
-$color1:  #db565e; // red
-$color2:  #65d69e; // green
-$color3:  #e5a64c; // amber
-$color4:  #4b8fc8; // blue
-$color5:  #75969b; // muted steel
-$color6:  #58e1e8; // cyan
-$color7:  #c7e2e5; // foreground
+$color0: #02080e;
+$color1: #ff5b69;
+$color2: #50e6aa;
+$color3: #f2b84b;
+$color4: #5bdaeb;
+$color5: #a78bfa;
+$color6: #5bdaeb;
+$color7: #daeef2;
 
-$color8:  #10262e; // bright black / raised surface
-$color9:  #f06a70; // bright red
-$color10: #7be3ae; // bright green
-$color11: #f2bd61; // bright amber
-$color12: #61a5de; // bright blue
-$color13: #8ba9ae; // bright steel
-$color14: #78edf2; // bright cyan
-$color15: #e4f2f3; // bright white
+$color8: #52666e;
+$color9: #ff7b86;
+$color10: #73efbe;
+$color11: #ffd477;
+$color12: #85e8f2;
+$color13: #c5a7ff;
+$color14: #93f4ff;
+$color15: #ffffff;

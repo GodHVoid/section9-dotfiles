@@ -408,6 +408,7 @@ export default ({
   return (
     <box
       class="app-launcher"
+      css={"background-color: #02080e;"}
       spacing={10}
       $={(self) => {
         // React to global search text/activate, scoped to this monitor

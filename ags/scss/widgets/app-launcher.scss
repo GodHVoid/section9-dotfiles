@@ -1,7 +1,7 @@
 .app-launcher {
   min-height: 600px;
 
-  background: rgba($background, 0.96);
+  background: $background;
   border: 1px solid rgba($color6, 0.55);
   border-radius: 3px;
 
@@ -43,7 +43,7 @@
 
   entry {
     color: $foreground;
-    background: rgba($color0, 0.85);
+    background: $color0;
     border: 1px solid rgba($color6, 0.35);
     border-radius: 2px;
     padding: 8px 12px;

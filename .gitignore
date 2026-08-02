@@ -18,3 +18,6 @@ hypr/hyprlandCrashReport*
 
 ags/cache/
 ags/logs/
+ags/**/*.bak
+ags/**/*.before-opaque-*
+ags/**/*.broken.*
