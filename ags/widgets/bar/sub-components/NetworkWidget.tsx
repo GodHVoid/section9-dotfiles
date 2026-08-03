@@ -1,70 +1,153 @@
 import { Accessor, createComputed, createState } from "ags";
 import AstalNetwork from "gi://AstalNetwork";
-import { activateState } from "../Bar";
+import GLib from "gi://GLib";
 import { Gtk } from "ags/gtk4";
+import { activateState } from "../Bar";
 
 const network = AstalNetwork.get_default();
 
-export const [networkActivity, setNetworkActivity] = createState({
-  connected: false,
-  name: "",
-  type: "wifi" as "wifi" | "ethernet" | "vpn" | "unknown",
-});
+type NetworkType = "wifi" | "ethernet" | "vpn" | "unknown";
 
-function updateActivity(triggerPulse = false) {
+type NetworkActivity = {
+  connected: boolean;
+  name: string;
+  type: NetworkType;
+};
+
+export const [networkActivity, setNetworkActivity] =
+  createState<NetworkActivity>({
+    connected: false,
+    name: "Initializing",
+    type: "unknown",
+  });
+
+let startupComplete = false;
+let updateTimer = 0;
+
+let previousActivity: NetworkActivity = {
+  connected: false,
+  name: "Initializing",
+  type: "unknown",
+};
+
+function getCurrentActivity(): NetworkActivity {
   const wifi = network.wifi;
   const wired = network.wired;
 
-  let connected = false;
-  let name = "Disconnected";
-  let type: "wifi" | "ethernet" | "vpn" | "unknown" = "unknown";
-
-  // Prefer an active Wi-Fi connection over wired/bridge interfaces.
+  /*
+   * Prefer Wi-Fi whenever it has a valid connected SSID.
+   * This prevents temporary wired/bridge state from replacing
+   * an already established wireless connection.
+   */
   if (
-    wifi &&
-    wifi.ssid &&
+    wifi?.ssid &&
     wifi.internet === AstalNetwork.Internet.CONNECTED
   ) {
-    connected = true;
-    name = wifi.ssid;
-    type = "wifi";
-  } else if (
+    return {
+      connected: true,
+      name: wifi.ssid,
+      type: "wifi",
+    };
+  }
+
+  if (
     wired &&
     wired.internet === AstalNetwork.Internet.CONNECTED
   ) {
-    connected = true;
-    name = "Ethernet";
-    type = "ethernet";
-  } else if (wifi) {
-    connected = false;
-    name = "Disconnected";
-    type = "wifi";
+    return {
+      connected: true,
+      name: "Ethernet",
+      type: "ethernet",
+    };
   }
-  // Push state updates to reactive variables
-  setNetworkActivity({ connected, name, type });
 
-  // Pulse the Bar's state engine if changes happen actively post-boot
-  if (triggerPulse) {
-    activateState("network", 3000);
+  if (wifi) {
+    return {
+      connected: false,
+      name: "Disconnected",
+      type: "wifi",
+    };
   }
+
+  return {
+    connected: false,
+    name: "Disconnected",
+    type: "unknown",
+  };
 }
 
-// Track immediately on startup so widgets aren't blank on launch
-updateActivity(false);
+function activityChanged(
+  current: NetworkActivity,
+  previous: NetworkActivity,
+): boolean {
+  return (
+    current.connected !== previous.connected ||
+    current.name !== previous.name ||
+    current.type !== previous.type
+  );
+}
 
-// Safe GObject Property Change Listeners
+function applyNetworkState(allowPulse = true) {
+  const currentActivity = getCurrentActivity();
+  const changed = activityChanged(currentActivity, previousActivity);
+
+  setNetworkActivity(currentActivity);
+
+  /*
+   * Do not show a network activity pulse while AstalNetwork and
+   * NetworkManager are still discovering interfaces at login.
+   */
+  if (startupComplete && allowPulse && changed) {
+    activateState("network", 3000);
+  }
+
+  previousActivity = currentActivity;
+}
+
+function scheduleNetworkUpdate() {
+  /*
+   * Debounce rapid interface events. At login, wired, Wi-Fi, and
+   * primary-adapter properties may all update within milliseconds.
+   */
+  if (updateTimer !== 0) {
+    GLib.source_remove(updateTimer);
+  }
+
+  updateTimer = GLib.timeout_add(
+    GLib.PRIORITY_DEFAULT,
+    500,
+    () => {
+      updateTimer = 0;
+      applyNetworkState(true);
+      return GLib.SOURCE_REMOVE;
+    },
+  );
+}
+
+/*
+ * Give NetworkManager time to establish the real primary connection
+ * before displaying the initial state.
+ */
+GLib.timeout_add(
+  GLib.PRIORITY_DEFAULT,
+  1500,
+  () => {
+    applyNetworkState(false);
+    startupComplete = true;
+    return GLib.SOURCE_REMOVE;
+  },
+);
+
 if (network.wifi) {
-  // Listen to both SSID changes and state/internet level changes
-  network.wifi.connect("notify::ssid", () => updateActivity(true));
-  network.wifi.connect("notify::internet", () => updateActivity(true));
+  network.wifi.connect("notify::ssid", scheduleNetworkUpdate);
+  network.wifi.connect("notify::internet", scheduleNetworkUpdate);
 }
 
 if (network.wired) {
-  network.wired.connect("notify::internet", () => updateActivity(true));
+  network.wired.connect("notify::internet", scheduleNetworkUpdate);
 }
 
-// Watch for primary adapter target swaps
-network.connect("notify::primary", () => updateActivity(true));
+network.connect("notify::primary", scheduleNetworkUpdate);
 
 export default ({ widthRequest }: { widthRequest?: Accessor<number> }) => {
   return (
@@ -78,11 +161,13 @@ export default ({ widthRequest }: { widthRequest?: Accessor<number> }) => {
         pixelSize={26}
         iconName={createComputed(() => {
           const activity = networkActivity();
+
           if (activity.type === "ethernet") {
             return activity.connected
               ? "network-wired-symbolic"
               : "network-wired-disconnected-symbolic";
           }
+
           return activity.connected
             ? "network-wireless-signal-excellent-symbolic"
             : "network-wireless-offline-symbolic";
@@ -95,22 +180,30 @@ export default ({ widthRequest }: { widthRequest?: Accessor<number> }) => {
           class="title"
           label={createComputed(() => {
             const activity = networkActivity();
+
+            if (activity.name === "Initializing") {
+              return "Network Initializing";
+            }
+
             if (activity.connected) {
               return activity.type === "wifi"
                 ? "Connected to Wi-Fi"
                 : "Ethernet Connected";
             }
+
             return activity.type === "wifi"
               ? "Wi-Fi Disconnected"
-              : "Ethernet Disconnected";
+              : "Network Disconnected";
           })}
         />
+
         <label
           xalign={0}
           class="subtitle"
           visible={createComputed(
             () =>
-              networkActivity().connected && networkActivity().type === "wifi",
+              networkActivity().connected &&
+              networkActivity().type === "wifi",
           )}
           label={createComputed(() => networkActivity().name)}
         />

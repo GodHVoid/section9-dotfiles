@@ -96,6 +96,28 @@ require("lazy").setup({
 
 	{
 		"nvim-treesitter/nvim-treesitter",
+		lazy = false,
+		build = ":TSUpdate",
+		config = function()
+			require("nvim-treesitter").setup({
+				install_dir = vim.fn.stdpath("data") .. "/site",
+			})
+
+			require("nvim-treesitter").install({
+				"bash",
+				"c",
+				"cpp",
+				"json",
+				"lua",
+				"python",
+				"vim",
+				"vimdoc",
+			})
+		end,
+	},
+
+	{
+		"nvim-treesitter/nvim-treesitter",
 
 		-- The current plugin explicitly does not support lazy loading.
 		lazy = false,
