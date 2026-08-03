@@ -35,8 +35,6 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # Alt+C   fuzzy directory selection
 # ---------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    source <(fzf --zsh)
-
     export FZF_DEFAULT_OPTS="
         --height=45%
         --layout=reverse
@@ -49,27 +47,31 @@ if command -v fzf >/dev/null 2>&1; then
 
     export FZF_CTRL_R_OPTS="
         --prompt='HISTORY > '
-        --preview='echo {}'
+        --preview='printf \"%s\n\" {}'
         --preview-window=down:3:wrap
     "
 
     export FZF_CTRL_T_OPTS="
         --prompt='FILES > '
         --preview='
-            if command -v bat >/dev/null 2>&1; then
-                bat --color=always --style=numbers --line-range=:200 {}
+            target={}
+            if [[ -d \"\$target\" ]]; then
+                command ls -la -- \"\$target\"
+            elif command -v bat >/dev/null 2>&1; then
+                bat --color=always --style=numbers --line-range=:200 -- \"\$target\"
             else
-                sed -n \"1,200p\" {}
+                sed -n \"1,200p\" -- \"\$target\"
             fi
         '
     "
 
     export FZF_ALT_C_OPTS="
         --prompt='DIRECTORY > '
-        --preview='ls -la {}'
+        --preview='command ls -la -- {}'
     "
-fi
 
+    source <(fzf --zsh)
+fi
 # ---------------------------------------------------------
 # zoxide
 # ---------------------------------------------------------

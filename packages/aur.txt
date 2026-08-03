@@ -1,0 +1,4 @@
+aylurs-gtk-shell-git
+zsh-autosuggestions-git
+zsh-sudo-git
+zsh-auto-notify
