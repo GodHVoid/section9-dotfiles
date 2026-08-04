@@ -6,11 +6,14 @@ bluez-utils
 brightnessctl
 cliphist
 curl
+duf
+dust
 eza
 fastfetch
 fzf
 gcc
 git
+git-delta
 gjs
 grim
 gtk-layer-shell
@@ -41,6 +44,7 @@ pipewire-pulse
 playerctl
 polkit-kde-agent
 power-profiles-daemon
+procs
 python
 python-gobject
 python-pip

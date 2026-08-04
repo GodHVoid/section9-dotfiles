@@ -19,24 +19,27 @@ setopt AUTO_CD
 setopt INTERACTIVE_COMMENTS
 
 # ---------------------------------------------------------
-# Alias
+# Aliases
 # ---------------------------------------------------------
-alias cat='bat --paging=never'
-alias find='fd'
-alias grep='rg'
-alias ps='procs'
-alias du='dust'
-alias df='duf'
-alias top='btop'
-alias diff='delta'
-alias ls='eza --icons=always --group-directories-first'
-alias ll='eza -lah --icons=always --group-directories-first'
-alias la='eza -a --icons=always --group-directories-first'
-alias tree='eza --tree --icons=always'
-alias lt='eza --tree --level=2 --icons=always'
-alias lta='eza --tree --level=3 --all --icons=always'
-alias lg='eza -lah --git --icons=always --group-directories-first'
-alias newest='eza -lah --sort=modified --reverse --icons=always'
+command -v bat   >/dev/null 2>&1 && alias cat='bat --paging=never'
+command -v fd    >/dev/null 2>&1 && alias find='fd'
+command -v rg    >/dev/null 2>&1 && alias grep='rg'
+command -v procs >/dev/null 2>&1 && alias ps='procs'
+command -v dust  >/dev/null 2>&1 && alias du='dust'
+command -v duf   >/dev/null 2>&1 && alias df='duf'
+command -v btop  >/dev/null 2>&1 && alias top='btop'
+command -v delta >/dev/null 2>&1 && alias diff='delta'
+
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza --icons=always --group-directories-first'
+    alias ll='eza -lah --icons=always --group-directories-first'
+    alias la='eza -a --icons=always --group-directories-first'
+    alias tree='eza --tree --icons=always'
+    alias lt='eza --tree --level=2 --icons=always'
+    alias lta='eza --tree --level=3 --all --icons=always'
+    alias lg='eza -lah --git --icons=always --group-directories-first'
+    alias newest='eza -lah --sort=modified --reverse --icons=always'
+fi
 
 # ---------------------------------------------------------
 # Completion
