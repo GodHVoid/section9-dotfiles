@@ -19,6 +19,11 @@ setopt AUTO_CD
 setopt INTERACTIVE_COMMENTS
 
 # ---------------------------------------------------------
+# PATH
+# ---------------------------------------------------------
+export PATH="$HOME/Git/section9-dotfiles/bin:$PATH"
+
+# ---------------------------------------------------------
 # Aliases
 # ---------------------------------------------------------
 command -v bat   >/dev/null 2>&1 && alias cat='bat --paging=never'
