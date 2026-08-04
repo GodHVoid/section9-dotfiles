@@ -6,6 +6,7 @@ bluez-utils
 brightnessctl
 cliphist
 curl
+eza
 fastfetch
 fzf
 gcc
