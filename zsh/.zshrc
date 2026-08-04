@@ -19,6 +19,26 @@ setopt AUTO_CD
 setopt INTERACTIVE_COMMENTS
 
 # ---------------------------------------------------------
+# Alias
+# ---------------------------------------------------------
+alias cat='bat --paging=never'
+alias find='fd'
+alias grep='rg'
+alias ps='procs'
+alias du='dust'
+alias df='duf'
+alias top='btop'
+alias diff='delta'
+alias ls='eza --icons=always --group-directories-first'
+alias ll='eza -lah --icons=always --group-directories-first'
+alias la='eza -a --icons=always --group-directories-first'
+alias tree='eza --tree --icons=always'
+alias lt='eza --tree --level=2 --icons=always'
+alias lta='eza --tree --level=3 --all --icons=always'
+alias lg='eza -lah --git --icons=always --group-directories-first'
+alias newest='eza -lah --sort=modified --reverse --icons=always'
+
+# ---------------------------------------------------------
 # Completion
 # ---------------------------------------------------------
 autoload -Uz compinit
@@ -35,14 +55,21 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # Alt+C   fuzzy directory selection
 # ---------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
+    if command -v fd >/dev/null 2>&1; then
+        export FZF_DEFAULT_COMMAND='fd --hidden --strip-cwd-prefix --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_ALT_C_COMMAND='fd --type d --hidden --strip-cwd-prefix --exclude .git'
+    fi
+
     export FZF_DEFAULT_OPTS="
-        --height=45%
+        --height=70%
         --layout=reverse
         --border=rounded
         --info=inline
         --prompt='SECTION 9 > '
         --pointer='>'
         --marker='*'
+        --preview-window=right:60%
     "
 
     export FZF_CTRL_R_OPTS="
@@ -56,18 +83,28 @@ if command -v fzf >/dev/null 2>&1; then
         --preview='
             target={}
             if [[ -d \"\$target\" ]]; then
-                command ls -la -- \"\$target\"
+                if command -v eza >/dev/null 2>&1; then
+                    eza --tree --level=2 --icons=always --color=always -- \"\$target\"
+                else
+                    command ls -la -- \"\$target\"
+                fi
             elif command -v bat >/dev/null 2>&1; then
-                bat --color=always --style=numbers --line-range=:200 -- \"\$target\"
+                bat --color=always --style=numbers --line-range=:300 -- \"\$target\"
             else
-                sed -n \"1,200p\" -- \"\$target\"
+                sed -n \"1,300p\" -- \"\$target\"
             fi
         '
     "
 
     export FZF_ALT_C_OPTS="
         --prompt='DIRECTORY > '
-        --preview='command ls -la -- {}'
+        --preview='
+            if command -v eza >/dev/null 2>&1; then
+                eza --tree --level=2 --icons=always --color=always -- {}
+            else
+                command ls -la -- {}
+            fi
+        '
     "
 
     source <(fzf --zsh)
