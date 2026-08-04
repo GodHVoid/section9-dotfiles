@@ -5,7 +5,7 @@ local themeScriptsDir = home .. "/.config/hypr/theme/scripts"
 hl.on("hyprland.start", function()
 	hl.exec_cmd("hyprpm reload && hyprctl reload")
 	hl.exec_cmd("hyprpaper")
-	hl.exec_cmd("pkill -x quickshell 2>/dev/null; pkill -x qs 2>/dev/null; qs -c section9")
+	-- hl.exec_cmd("pkill -x quickshell 2>/dev/null; pkill -x qs 2>/dev/null; qs -c section9")
 	hl.exec_cmd(scriptsDir .. "/compile-run-binaries.sh")
 	hl.exec_cmd("systemctl --user start hyprpolkitagent")
 	hl.exec_cmd(themeScriptsDir .. "/system-theme.sh apply")
