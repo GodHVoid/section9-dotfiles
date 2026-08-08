@@ -56,7 +56,7 @@ Variants {
                 anchors.fill: parent
 
                 property int columnCount:
-                    Math.max(24, Math.floor(width / 22))
+                    Math.max(9, Math.floor(width / 55))
 
                 Repeater {
                     id: matrixColumns
@@ -68,7 +68,7 @@ Variants {
                         required property int index
 
                         property int fallDuration:
-                            7000 + Math.floor(Math.random() * 8000)
+                            14000 + Math.floor(Math.random() * 12000)
 
                         property int startDelay:
                             Math.floor(Math.random() * 5000)
@@ -181,7 +181,7 @@ Variants {
                 }
 
                 Timer {
-                    interval: 300
+                    interval: 600
                     running: true
                     repeat: false
 

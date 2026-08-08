@@ -16,8 +16,6 @@ ags/logs/
 # Hyprland crash reports
 hypr/hyprlandCrashReport*
 
-ags/cache/
-ags/logs/
 ags/**/*.bak
 ags/**/*.before-opaque-*
 ags/**/*.broken.*

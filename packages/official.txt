@@ -1,4 +1,5 @@
 
+arch-audit
 base-devel
 blueman
 bluez

@@ -46,6 +46,15 @@ if command -v eza >/dev/null 2>&1; then
     alias newest='eza -lah --sort=modified --reverse --icons=always'
 fi
 
+#----------------------------------------------------
+# VLSS + REALITY
+#----------------------------------------------------
+alias ghost-on='section9-proxy on'
+alias ghost-off='section9-proxy off'
+alias ghost-status='section9-proxy status'
+alias ghost-logs='section9-proxy logs'
+alias ghost-follow='section9-proxy follow'
+
 # ---------------------------------------------------------
 # Completion
 # ---------------------------------------------------------
